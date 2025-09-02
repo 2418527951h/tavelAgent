@@ -35,21 +35,25 @@ def get_total_results(keywords, file_name):
                 "open_time": poi.get("business", "无").get("opentime_today", "以现场为准"),  # 开放时间
                 "rating": poi.get("business", "无").get("rating", "无"),  # 评分
             })
-            if keywords == '酒店':
-                continue
+            
             now = index+(page_num-1)*page_size
-            data[now]['content'] = f"{poi['name']}位于{poi['address']}，门票{data[now]['price']}，开放时间{data[now]['open_time']}"  # 检索用的文本内容
+            if keywords == '酒店':
+                data[now]['content'] = f"{poi['name']}位于{poi['address']}，电话{data[now]['tel']}，评分{data[now]['rating']}"
+            elif keywords == '餐馆':
+                data[now]['content'] = f"{poi['name']}位于{poi['address']}，大约人均花销{data[now]['price']}，电话{data[now]['tel']}，开放时间{data[now]['open_time']}，评分{data[now]['rating']}"
+            elif keywords == '旅游景点':
+                data[now]['content'] = f"{poi['name']}位于{poi['address']}，门票{data[now]['price']}，开放时间{data[now]['open_time']}，电话{data[now]['tel']}，评分{data[now]['rating']}"  # 检索用的文本内容
             # print(f"已处理景点：{data[index]['price']}")
     save_to_csv(data, file_name)
     
     # 4. 保存为CSV（后续用于构建向量库）
 def save_to_csv(data, file_name):
     df = pd.DataFrame(data)
-    df.to_csv(f"data/{region}/{file_name}.csv", index=False, encoding="utf-8")
+    df.to_csv(f"data/chengdu/{file_name}.csv", index=False, encoding="utf-8")
 
 
 if __name__ == "__main__":
     # get_total_results(keywords='旅游景点', file_name='travel_spots')  # 获取旅游景点信息
-    # get_total_results(keywords='餐馆', file_name='restaurant')  # 获取餐馆信息
-    get_total_results(keywords='酒店', file_name='hotel')  # 获取酒店
+    get_total_results(keywords='餐馆', file_name='restaurant')  # 获取餐馆信息
+    # get_total_results(keywords='酒店', file_name='hotel')  # 获取酒店
     
